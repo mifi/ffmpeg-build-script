@@ -10,6 +10,10 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v2
 
+      - name: Install deps
+        run: |
+          brew install nasm yasm opus libogg pkg-config zlib
+
       - name: Build ffmpeg
         run: |
           SKIP_INSTALL=yes ./build-ffmpeg --build
@@ -19,8 +23,8 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v')
         with:
           files: |
-            workspace/ffmpeg
-            workspace/ffprobe
+            workspace/bin/ffmpeg
+            workspace/bin/ffprobe
           draft: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
