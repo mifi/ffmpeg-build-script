@@ -1,0 +1,26 @@
+name: Build/release
+
+on: push
+
+jobs:
+  release:
+    runs-on: macos-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
+      - name: Build ffmpeg
+        run: |
+          SKIP_INSTALL=yes ./build-ffmpeg --build
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          files: |
+            workspace/ffmpeg
+            workspace/ffprobe
+          draft: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
