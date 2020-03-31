@@ -34,12 +34,6 @@ make_dir () {
 	fi
 }
 
-remove_dir () {
-	if [ -d $1 ]; then
-		rm -r "$1"
-	fi
-}
-
 download () {
 
 	DOWNLOAD_PATH=$PACKAGES;
@@ -114,35 +108,6 @@ command_exists() {
 }
 
 
-build_done () {
-	touch "$PACKAGES/$1.done"
-}
-
-echo "ffmpeg-build-script v$VERSION"
-echo "========================="
-echo ""
-
-case "$1" in
-"--cleanup")
-	remove_dir $PACKAGES
-	remove_dir $WORKSPACE
-	echo "Cleanup done."
-	echo ""
-	exit 0
-    ;;
-"--build")
-
-    ;;
-*)
-    echo "Usage: $0"
-    echo "   --build: start building process"
-    echo "   --cleanup: remove all working dirs"
-    echo "   --help: show this help"
-    echo ""
-    exit 0
-    ;;
-esac
-
 echo "Using $MJOBS make jobs simultaneously."
 
 make_dir $PACKAGES
@@ -165,16 +130,6 @@ if ! command_exists "curl"; then
     exit 1
 fi
 
-#if build "av1"; then
-#	download "https://aomedia.googlesource.com/aom/+archive/60a00de69ca79fe5f51dcbf862aaaa8eb50ec344.tar.gz" "av1.tar.gz" "av1"
-#	cd $PACKAGES/av1 || exit
-#	mkdir -p $PACKAGES/aom_build
-#	cd $PACKAGES/aom_build
-#	execute cmake -DENABLE_TESTS=0 -DCMAKE_INSTALL_PREFIX:PATH=${WORKSPACE} $PACKAGES/av1
-#	execute make -j $MJOBS
-#	execute make install
-#	build_done "av1"
-#fi
 
 build "ffmpeg"
 download "https://git.ffmpeg.org/gitweb/ffmpeg.git/snapshot/47773f7979d77c1fcd08b57e85af1ad08d9248c8.tar.gz" "ffmpeg-snapshot.tar.bz2"
@@ -186,23 +141,21 @@ cd $PACKAGES/ffmpeg-47773f7/ || exit
     --extra-cflags="-I$WORKSPACE/include" \
     --extra-ldflags="-L$WORKSPACE/lib" \
     --extra-libs="-lpthread -lm" \
-	--enable-static \
-	--disable-debug \
-	--disable-shared \
-	--disable-ffplay \
-	--disable-doc \
-	--enable-version3 \
-	--enable-pthreads \
-    --enable-libopus \
-	--enable-runtime-cpudetect \
-	--enable-avfilter \
-	--enable-filters
+		--enable-static \
+		--disable-debug \
+		--disable-shared \
+		--disable-ffplay \
+		--disable-doc \
+		--enable-version3 \
+		--enable-pthreads \
+		--enable-libopus \
+		--enable-runtime-cpudetect \
+		--enable-avfilter \
+		--enable-filters
 
 execute make -j $MJOBS
 execute make install
 
-echo ""
 echo "Building done. The binary can be found here: $WORKSPACE/bin/ffmpeg"
-echo ""
 
 exit 0

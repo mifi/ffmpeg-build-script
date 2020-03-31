@@ -12,7 +12,7 @@ jobs:
 
       - name: Install deps
         run: |
-          brew install nasm yasm opus libogg pkg-config zlib
+          brew install nasm yasm opus libogg pkg-config
 
       - name: Build ffmpeg
         run: |
