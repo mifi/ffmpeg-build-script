@@ -129,7 +129,7 @@ cd $PACKAGES/ffmpeg-47773f7/ || exit
     --extra-ldflags="-L$WORKSPACE/lib" \
     --extra-libs="-lpthread -lm" \
 		--enable-static \
-		--disable-openssl \
+		--disable-securetransport \
 		--disable-debug \
 		--disable-shared \
 		--disable-ffplay \
