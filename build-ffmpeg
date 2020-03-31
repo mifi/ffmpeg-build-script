@@ -12,18 +12,7 @@ CFLAGS="-I${WORKSPACE}/include"
 PKG_CONFIG_PATH="${WORKSPACE}/lib/pkgconfig"
 ADDITIONAL_CONFIGURE_OPTIONS=""
 
-# Speed up the process
-# Env Var NUMJOBS overrides automatic detection
-if [[ -n $NUMJOBS ]]; then
-    MJOBS=$NUMJOBS
-elif [[ -f /proc/cpuinfo ]]; then
-    MJOBS=$(grep -c processor /proc/cpuinfo)
-elif [[ "$OSTYPE" == "darwin"* ]]; then
-	MJOBS=$(sysctl -n machdep.cpu.thread_count)
-	ADDITIONAL_CONFIGURE_OPTIONS="--enable-videotoolbox"
-else
-    MJOBS=4
-fi
+#ADDITIONAL_CONFIGURE_OPTIONS="--enable-videotoolbox"
 
 make_dir () {
 	if [ ! -d $1 ]; then
@@ -108,8 +97,6 @@ command_exists() {
 }
 
 
-echo "Using $MJOBS make jobs simultaneously."
-
 make_dir $PACKAGES
 make_dir $WORKSPACE
 
@@ -142,6 +129,7 @@ cd $PACKAGES/ffmpeg-47773f7/ || exit
     --extra-ldflags="-L$WORKSPACE/lib" \
     --extra-libs="-lpthread -lm" \
 		--enable-static \
+		--disable-openssl \
 		--disable-debug \
 		--disable-shared \
 		--disable-ffplay \
@@ -153,7 +141,7 @@ cd $PACKAGES/ffmpeg-47773f7/ || exit
 		--enable-avfilter \
 		--enable-filters
 
-execute make -j $MJOBS
+execute make -j 8
 execute make install
 
 echo "Building done. The binary can be found here: $WORKSPACE/bin/ffmpeg"
