@@ -382,26 +382,12 @@ cd $PACKAGES/ffmpeg-47773f7/ || exit
 	--disable-shared \
 	--disable-ffplay \
 	--disable-doc \
-	--enable-openssl \
-	--enable-gpl \
 	--enable-version3 \
-	--enable-nonfree \
 	--enable-pthreads \
-	--enable-libvpx \
-	--enable-libmp3lame \
     --enable-libopus \
-	--enable-libtheora \
-	--enable-libvorbis \
-	--enable-libx264 \
-	--enable-libx265 \
 	--enable-runtime-cpudetect \
-	--enable-libfdk-aac \
 	--enable-avfilter \
-	--enable-libopencore_amrwb \
-	--enable-libopencore_amrnb \
-	--enable-filters \
-	--enable-libvidstab \
-	--enable-libaom
+	--enable-filters
 
 execute make -j $MJOBS
 execute make install
