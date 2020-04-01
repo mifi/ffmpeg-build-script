@@ -5,8 +5,13 @@ on: push
 jobs:
   release:
     runs-on: macos-latest
+#    runs-on: ubuntu-latest
 
     steps:
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+
       - name: Check out Git repository
         uses: actions/checkout@v2
 
@@ -15,8 +20,10 @@ jobs:
           brew install nasm yasm pkg-config
 
       - name: Build ffmpeg
+        env:
+          GIT_TAG: ${{ steps.get_version.outputs.VERSION }}
         run: |
-          ./build-ffmpeg
+          ./build-ffmpeg.sh "$GIT_TAG"
 
       - name: Release
         uses: softprops/action-gh-release@v1
@@ -25,6 +32,6 @@ jobs:
           files: |
             workspace/bin/ffmpeg
             workspace/bin/ffprobe
-          draft: true
+          draft: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
