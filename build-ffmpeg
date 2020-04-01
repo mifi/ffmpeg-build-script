@@ -123,8 +123,8 @@ cd $PACKAGES/ffmpeg-47773f7/ || exit
     --pkgconfigdir="$WORKSPACE/lib/pkgconfig" \
     --prefix=${WORKSPACE} \
     --pkg-config-flags="--static" \
-    --extra-cflags="-I$WORKSPACE/include -static" \
-    --extra-ldflags="-L$WORKSPACE/lib -static" \
+    --extra-cflags="-I$WORKSPACE/include" \
+    --extra-ldflags="-L$WORKSPACE/lib" \
     --extra-libs="-lpthread -lm" \
 		--enable-static \
 		--disable-securetransport \

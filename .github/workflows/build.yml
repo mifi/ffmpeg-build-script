@@ -16,7 +16,7 @@ jobs:
 
       - name: Build ffmpeg
         run: |
-          SKIP_INSTALL=yes ./build-ffmpeg --build
+          ./build-ffmpeg
 
       - name: Release
         uses: softprops/action-gh-release@v1
