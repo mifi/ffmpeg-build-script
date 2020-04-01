@@ -7,8 +7,6 @@ CWD=$(pwd)
 PACKAGES="$CWD/packages"
 WORKSPACE="$CWD/workspace"
 CC=clang
-LDFLAGS="-L${WORKSPACE}/lib -lm"
-CFLAGS="-I${WORKSPACE}/include"
 PKG_CONFIG_PATH="${WORKSPACE}/lib/pkgconfig"
 ADDITIONAL_CONFIGURE_OPTIONS=""
 
@@ -125,23 +123,23 @@ cd $PACKAGES/ffmpeg-47773f7/ || exit
     --pkgconfigdir="$WORKSPACE/lib/pkgconfig" \
     --prefix=${WORKSPACE} \
     --pkg-config-flags="--static" \
-    --extra-cflags="-I$WORKSPACE/include" \
-    --extra-ldflags="-L$WORKSPACE/lib" \
+    --extra-cflags="-I$WORKSPACE/include -static" \
+    --extra-ldflags="-L$WORKSPACE/lib -static" \
     --extra-libs="-lpthread -lm" \
 		--enable-static \
 		--disable-securetransport \
 		--disable-debug \
 		--disable-shared \
 		--disable-ffplay \
+		--disable-lzma \
 		--disable-doc \
 		--enable-version3 \
 		--enable-pthreads \
-		--enable-libopus \
 		--enable-runtime-cpudetect \
 		--enable-avfilter \
 		--enable-filters
 
-execute make -j 8
+execute make -j 4
 execute make install
 
 echo "Building done. The binary can be found here: $WORKSPACE/bin/ffmpeg"
