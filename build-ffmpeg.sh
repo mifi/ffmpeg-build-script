@@ -32,12 +32,15 @@ cd "$EXTRACTED_DIR"
 
 echo "Building..."
 
+# Min electron supported version
+MACOS_MIN="10.10"
+
 ./configure $ADDITIONAL_CONFIGURE_OPTIONS \
     --pkgconfigdir="$WORKSPACE/lib/pkgconfig" \
     --prefix=${WORKSPACE} \
     --pkg-config-flags="--static" \
-    --extra-cflags="-I$WORKSPACE/include" \
-    --extra-ldflags="-L$WORKSPACE/lib" \
+    --extra-cflags="-I$WORKSPACE/include -mmacosx-version-min=${MACOS_MIN}" \
+    --extra-ldflags="-L$WORKSPACE/lib -mmacosx-version-min=${MACOS_MIN}" \
     --extra-libs="-lpthread -lm" \
 		--enable-static \
 		--disable-securetransport \
