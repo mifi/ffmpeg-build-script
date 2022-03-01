@@ -289,90 +289,7 @@ fi
 ## build tools
 ##
 
-if build "giflib" "5.2.1"; then
-  download "https://netcologne.dl.sourceforge.net/project/giflib/giflib-5.2.1.tar.gz"
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-      download "https://sourceforge.net/p/giflib/bugs/_discuss/thread/4e811ad29b/c323/attachment/Makefile.patch"
-      execute patch -p0 --forward "${PACKAGES}/giflib-5.2.1/Makefile" "${PACKAGES}/Makefile.patch" || true
-    fi
-  cd "${PACKAGES}"/giflib-5.2.1 || exit
-  #multicore build disabled for this library
-  execute make
-  execute make PREFIX="${WORKSPACE}" install
-  build_done "giflib" "5.2.1"
-fi
-
-if build "pkg-config" "0.29.2"; then
-  download "https://pkgconfig.freedesktop.org/releases/pkg-config-0.29.2.tar.gz"
-  execute ./configure --silent --prefix="${WORKSPACE}" --with-pc-path="${WORKSPACE}"/lib/pkgconfig --with-internal-glib
-  execute make -j $MJOBS
-  execute make install
-  build_done "pkg-config" "0.29.2"
-fi
-
-if build "yasm" "1.3.0"; then
-  download "https://github.com/yasm/yasm/releases/download/v1.3.0/yasm-1.3.0.tar.gz"
-  execute ./configure --prefix="${WORKSPACE}"
-  execute make -j $MJOBS
-  execute make install
-  build_done "yasm" "1.3.0"
-fi
-
-if build "nasm" "2.15.05"; then
-  download "https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/nasm-2.15.05.tar.xz"
-  execute ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
-  execute make -j $MJOBS
-  execute make install
-  build_done "nasm" "2.15.05"
-fi
-
-if build "zlib" "1.2.11"; then
-  download "https://www.zlib.net/zlib-1.2.11.tar.gz"
-  execute ./configure --static --prefix="${WORKSPACE}"
-  execute make -j $MJOBS
-  execute make install
-  build_done "zlib" "1.2.11"
-fi
-
-if build "m4" "1.4.19"; then
-  download "https://ftp.gnu.org/gnu/m4/m4-1.4.19.tar.gz"
-  execute ./configure --prefix="${WORKSPACE}"
-  execute make -j $MJOBS
-  execute make install
-  build_done "m4" "1.4.19"
-fi
-
-if build "autoconf" "2.71"; then
-  download "https://ftp.gnu.org/gnu/autoconf/autoconf-2.71.tar.gz"
-  execute ./configure --prefix="${WORKSPACE}"
-  execute make -j $MJOBS
-  execute make install
-  build_done "autoconf" "2.71"
-fi
-
-if build "automake" "1.16.5"; then
-  download "https://ftp.gnu.org/gnu/automake/automake-1.16.5.tar.gz"
-  execute ./configure --prefix="${WORKSPACE}"
-  execute make -j $MJOBS
-  execute make install
-  build_done "automake" "1.16.5"
-fi
-
-if build "libtool" "2.4.6"; then
-  download "https://ftpmirror.gnu.org/libtool/libtool-2.4.6.tar.gz"
-  execute ./configure --prefix="${WORKSPACE}" --enable-static --disable-shared
-  execute make -j $MJOBS
-  execute make install
-  build_done "libtool" "2.4.6"
-fi
-
-if build "cmake" "3.22.1"; then
-  download "https://github.com/Kitware/CMake/releases/download/v3.22.1/cmake-3.22.1.tar.gz"
-  execute ./configure --prefix="${WORKSPACE}" --parallel="${MJOBS}" -- -DCMAKE_USE_OPENSSL=OFF
-  execute make -j $MJOBS
-  execute make install
-  build_done "cmake" "3.22.1"
-fi
+# using brew
 
 ##
 ## Codecs
@@ -441,9 +358,6 @@ execute make -j $MJOBS
 execute make install
 
 verify_binary_type
-
-otool -L "$WORKSPACE/bin/ffmpeg"
-otool -L "$WORKSPACE/bin/ffprobe"
 
 echo ""
 echo "Building done. The following binaries can be found here:"

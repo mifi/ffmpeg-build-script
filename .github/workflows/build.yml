@@ -4,8 +4,6 @@ on:
   push:
     paths-ignore:
       - '*.md'
-  pull_request:
-    branches: [ master ]
 
 jobs:
   build-macos:
@@ -14,6 +12,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Install deps
+         run: |
+          brew install nasm yasm pkg-config
 
       - name: build ffmpeg
         run: |
