@@ -1,38 +1,43 @@
-name: Build/release
+name: build test
 
-on: push
+on:
+  push:
+    paths-ignore:
+      - '*.md'
+  pull_request:
+    branches: [ master ]
 
 jobs:
-  release:
+  build-macos:
+    name: build in native macOS
     runs-on: macos-latest
-#    runs-on: ubuntu-latest
-
-    if: startsWith(github.ref, 'refs/tags/')
-
     steps:
-      - name: Get the version
-        id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
-
-      - name: Check out Git repository
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install deps
+      - name: build ffmpeg
         run: |
-          brew install nasm yasm pkg-config
-
-      - name: Build ffmpeg
-        env:
-          GIT_TAG: ${{ steps.get_version.outputs.VERSION }}
+          while sleep 300; do echo "=====[ $SECONDS seconds still running ]====="; done &
+          SKIPINSTALL=yes VERBOSE=yes ./build-ffmpeg --build
+          kill %1
+      - name: check shared library
         run: |
-          ./build-ffmpeg.sh "$GIT_TAG"
+          otool -L ./workspace/bin/ffmpeg
+          otool -L ./workspace/bin/ffprobe
+      - name: test run
+        run: |
+          ./workspace/bin/ffmpeg -buildconf
+          ./workspace/bin/ffprobe -buildconf
+      - name: clean up
+        run: |
+          ./build-ffmpeg --cleanup
 
       - name: Release
         uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
             workspace/bin/ffmpeg
             workspace/bin/ffprobe
-          draft: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
