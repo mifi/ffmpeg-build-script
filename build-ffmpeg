@@ -20,6 +20,10 @@ MACOS_M1=false
 CONFIGURE_OPTIONS=()
 LATEST=false
 
+# todo change URL when ffmpeg v5:
+FFMPEG_URL="https://git.ffmpeg.org/gitweb/ffmpeg.git/snapshot/n$FFMPEG_VERSION.tar.gz"
+#FFMPEG_URL="https://github.com/FFmpeg/FFmpeg/archive/refs/heads/release/$FFMPEG_VERSION.tar.gz"
+
 
 # Check for Apple Silicon
 if [[ ("$(uname -m)" == "arm64") && ("$OSTYPE" == "darwin"*) ]]; then
@@ -322,8 +326,6 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   EXTRA_VERSION="${FFMPEG_VERSION}"
 fi
 
-FFMPEG_URL="https://git.ffmpeg.org/gitweb/ffmpeg.git/snapshot/n$FFMPEG_VERSION.tar.gz"
-#FFMPEG_URL="https://github.com/FFmpeg/FFmpeg/archive/refs/heads/release/$FFMPEG_VERSION.tar.gz"
 
 build "ffmpeg" "$FFMPEG_VERSION"
 download "${FFMPEG_URL}" "FFmpeg-release-$FFMPEG_VERSION.tar.gz"
@@ -354,6 +356,12 @@ download "${FFMPEG_URL}" "FFmpeg-release-$FFMPEG_VERSION.tar.gz"
   --enable-nonfree \
   --enable-gpl \
 	--enable-libx264 \
+  \
+  --disable-libxcb \
+  --disable-libxcb-shm \
+  --disable-libxcb-xfixes \
+  --disable-libxcb-shape \
+
 
 
 execute make -j $MJOBS
