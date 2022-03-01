@@ -264,6 +264,7 @@ mkdir -p "$WORKSPACE"
 export PATH="${WORKSPACE}/bin:$PATH"
 PKG_CONFIG_PATH="/usr/local/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig"
 PKG_CONFIG_PATH+=":/usr/local/share/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/lib/pkgconfig:/usr/share/pkgconfig:/usr/lib64/pkgconfig"
+PKG_CONFIG_PATH+=":${WORKSPACE}/lib/pkgconfig"
 export PKG_CONFIG_PATH
 
 if ! command_exists "make"; then
@@ -373,7 +374,6 @@ echo ""
 echo "Building done. The following binaries can be found here:"
 echo "- ffmpeg: $WORKSPACE/bin/ffmpeg"
 echo "- ffprobe: $WORKSPACE/bin/ffprobe"
-echo "- ffplay: $WORKSPACE/bin/ffplay"
 echo ""
 
 exit 0
