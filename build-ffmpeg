@@ -351,6 +351,8 @@ download "${FFMPEG_URL}" "FFmpeg-release-$FFMPEG_VERSION.tar.gz"
 	--enable-avfilter \
 	--enable-filters \
 	\
+  --enable-nonfree \
+  --enable-gpl \
 	--enable-libx264 \
 
 
