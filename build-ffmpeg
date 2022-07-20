@@ -7,7 +7,7 @@
 MACOS_MIN=10.10
 
 PROGNAME=$(basename "$0")
-FFMPEG_VERSION=4.4.1
+FFMPEG_VERSION=5.0.1
 CWD=$(pwd)
 PACKAGES="$CWD/packages"
 WORKSPACE="$CWD/workspace"
@@ -20,9 +20,7 @@ MACOS_M1=false
 CONFIGURE_OPTIONS=()
 LATEST=false
 
-# todo change URL when ffmpeg v5:
-FFMPEG_URL="https://git.ffmpeg.org/gitweb/ffmpeg.git/snapshot/n$FFMPEG_VERSION.tar.gz"
-#FFMPEG_URL="https://github.com/FFmpeg/FFmpeg/archive/refs/heads/release/$FFMPEG_VERSION.tar.gz"
+FFMPEG_URL="https://github.com/FFmpeg/FFmpeg/archive/refs/tags/n$FFMPEG_VERSION.tar.gz"
 
 
 # Check for Apple Silicon
@@ -301,20 +299,20 @@ fi
 ##
 
 if build "x264" "5db6aa6"; then
-	download "https://code.videolan.org/videolan/x264/-/archive/5db6aa6cab1b146e07b60cc1736a01f21da01154/x264-5db6aa6cab1b146e07b60cc1736a01f21da01154.tar.gz" "x264-5db6aa6.tar.gz"
-	cd "${PACKAGES}"/x264-5db6aa6 || exit
+  download "https://code.videolan.org/videolan/x264/-/archive/5db6aa6cab1b146e07b60cc1736a01f21da01154/x264-5db6aa6cab1b146e07b60cc1736a01f21da01154.tar.gz" "x264-5db6aa6.tar.gz"
+  cd "${PACKAGES}"/x264-5db6aa6 || exit
 
-	if [[ "$OSTYPE" == "linux-gnu" ]]; then
-		execute ./configure --prefix="${WORKSPACE}" --enable-static --enable-pic CXXFLAGS="-fPIC"
-	else
-		execute ./configure --prefix="${WORKSPACE}" --enable-static --enable-pic
-	fi
+  if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    execute ./configure --prefix="${WORKSPACE}" --enable-static --enable-pic CXXFLAGS="-fPIC ${CXXFLAGS}"
+  else
+    execute ./configure --prefix="${WORKSPACE}" --enable-static --enable-pic
+  fi
 
-	execute make -j $MJOBS
-	execute make install
-	execute make install-lib-static
+  execute make -j $MJOBS
+  execute make install
+  execute make install-lib-static
 
-	build_done "x264" "5db6aa6"
+  build_done "x264" "5db6aa6"
 fi
 CONFIGURE_OPTIONS+=("--enable-libx264")
 
@@ -356,7 +354,6 @@ download "${FFMPEG_URL}" "FFmpeg-release-$FFMPEG_VERSION.tar.gz"
 	\
   --enable-nonfree \
   --enable-gpl \
-	--enable-libx264 \
   \
   --disable-libxcb \
   --disable-libxcb-shm \
