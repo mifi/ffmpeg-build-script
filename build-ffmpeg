@@ -7,7 +7,7 @@
 MACOS_MIN=10.10
 
 PROGNAME=$(basename "$0")
-FFMPEG_VERSION=4.4.1
+FFMPEG_VERSION=5.0.1
 CWD=$(pwd)
 PACKAGES="$CWD/packages"
 WORKSPACE="$CWD/workspace"
@@ -20,9 +20,7 @@ MACOS_M1=false
 CONFIGURE_OPTIONS=()
 LATEST=false
 
-# todo change URL when ffmpeg v5:
-FFMPEG_URL="https://git.ffmpeg.org/gitweb/ffmpeg.git/snapshot/n$FFMPEG_VERSION.tar.gz"
-#FFMPEG_URL="https://github.com/FFmpeg/FFmpeg/archive/refs/heads/release/$FFMPEG_VERSION.tar.gz"
+FFMPEG_URL="https://github.com/FFmpeg/FFmpeg/archive/refs/tags/n$FFMPEG_VERSION.tar.gz"
 
 
 # Check for Apple Silicon
