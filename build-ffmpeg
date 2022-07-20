@@ -360,7 +360,6 @@ download "${FFMPEG_URL}" "FFmpeg-release-$FFMPEG_VERSION.tar.gz"
   --disable-libxcb-xfixes \
   --disable-libxcb-shape \
   --disable-outdev=xv \
-  --disable-indev=x11grab \
 
 
 
