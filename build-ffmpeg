@@ -355,11 +355,13 @@ download "${FFMPEG_URL}" "FFmpeg-release-$FFMPEG_VERSION.tar.gz"
   --enable-nonfree \
   --enable-gpl \
   \
-  --disable-libxcb \
+  --disable-xlib \
   --disable-libxcb-shm \
   --disable-libxcb-xfixes \
   --disable-libxcb-shape \
-  --disable-outdev=xv \
+  --disable-outdevs \
+  --disable-indevs \
+  --enable-indev=lavfi \
 
 
 
