@@ -303,7 +303,7 @@ if build "x264" "5db6aa6"; then
 	cd "${PACKAGES}"/x264-5db6aa6 || exit
 
 	if [[ "$OSTYPE" == "linux-gnu" ]]; then
-		execute ./configure --prefix="${WORKSPACE}" --enable-static --enable-pic CXXFLAGS="-fPIC"
+    execute ./configure --prefix="${WORKSPACE}" --enable-static --enable-pic CXXFLAGS="-fPIC ${CXXFLAGS}"
 	else
 		execute ./configure --prefix="${WORKSPACE}" --enable-static --enable-pic
 	fi
