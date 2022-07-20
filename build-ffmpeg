@@ -299,20 +299,20 @@ fi
 ##
 
 if build "x264" "5db6aa6"; then
-	download "https://code.videolan.org/videolan/x264/-/archive/5db6aa6cab1b146e07b60cc1736a01f21da01154/x264-5db6aa6cab1b146e07b60cc1736a01f21da01154.tar.gz" "x264-5db6aa6.tar.gz"
-	cd "${PACKAGES}"/x264-5db6aa6 || exit
+  download "https://code.videolan.org/videolan/x264/-/archive/5db6aa6cab1b146e07b60cc1736a01f21da01154/x264-5db6aa6cab1b146e07b60cc1736a01f21da01154.tar.gz" "x264-5db6aa6.tar.gz"
+  cd "${PACKAGES}"/x264-5db6aa6 || exit
 
-	if [[ "$OSTYPE" == "linux-gnu" ]]; then
+  if [[ "$OSTYPE" == "linux-gnu" ]]; then
     execute ./configure --prefix="${WORKSPACE}" --enable-static --enable-pic CXXFLAGS="-fPIC ${CXXFLAGS}"
-	else
-		execute ./configure --prefix="${WORKSPACE}" --enable-static --enable-pic
-	fi
+  else
+    execute ./configure --prefix="${WORKSPACE}" --enable-static --enable-pic
+  fi
 
-	execute make -j $MJOBS
-	execute make install
-	execute make install-lib-static
+  execute make -j $MJOBS
+  execute make install
+  execute make install-lib-static
 
-	build_done "x264" "5db6aa6"
+  build_done "x264" "5db6aa6"
 fi
 CONFIGURE_OPTIONS+=("--enable-libx264")
 
@@ -354,7 +354,6 @@ download "${FFMPEG_URL}" "FFmpeg-release-$FFMPEG_VERSION.tar.gz"
 	\
   --enable-nonfree \
   --enable-gpl \
-	--enable-libx264 \
   \
   --disable-libxcb \
   --disable-libxcb-shm \
