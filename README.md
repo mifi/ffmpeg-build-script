@@ -34,5 +34,7 @@ Check the Github Actions build that `otool -L` looks something like this:
 /usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0)
 ```
 
+MacOS arm64 must be build manually for now. Build using `./build-ffmpeg --build` then upload the artifacts to the GitHub release at https://github.com/mifi/ffmpeg-builds
+
 ## Credits
 This repo is a fork of https://github.com/markus-perl/ffmpeg-build-script
