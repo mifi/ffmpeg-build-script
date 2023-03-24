@@ -315,7 +315,6 @@ if build "x264" "5db6aa6"; then
 
   build_done "x264" "5db6aa6"
 fi
-CONFIGURE_OPTIONS+=("--enable-libx264")
 
 ##
 ## FFmpeg
@@ -355,6 +354,8 @@ download "${FFMPEG_URL}" "FFmpeg-release-$FFMPEG_VERSION.tar.gz"
 	\
   --enable-nonfree \
   --enable-gpl \
+  --enable-libx264 \
+  --enable-libvpx \
   \
   --disable-xlib \
   --disable-libxcb-shm \
