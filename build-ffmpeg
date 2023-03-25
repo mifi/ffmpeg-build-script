@@ -314,6 +314,7 @@ if build "x264" "5db6aa6"; then
   execute make install-lib-static
 
   build_done "x264" "5db6aa6"
+  CONFIGURE_OPTIONS+=("--enable-libx264")
 fi
 
 ##
@@ -354,7 +355,6 @@ download "${FFMPEG_URL}" "FFmpeg-release-$FFMPEG_VERSION.tar.gz"
 	\
   --enable-nonfree \
   --enable-gpl \
-  --enable-libx264 \
   --enable-libvpx \
   \
   --disable-xlib \
