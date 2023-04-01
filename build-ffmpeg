@@ -317,6 +317,23 @@ if build "x264" "5db6aa6"; then
 fi
 CONFIGURE_OPTIONS+=("--enable-libx264")
 
+if build "libvpx" "1.13.0"; then
+  download "https://github.com/webmproject/libvpx/archive/refs/tags/v1.13.0.tar.gz" "libvpx-1.13.0.tar.gz"
+
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    echo "Applying Darwin patch"
+    sed "s/,--version-script//g" build/make/Makefile >build/make/Makefile.patched
+    sed "s/-Wl,--no-undefined -Wl,-soname/-Wl,-undefined,error -Wl,-install_name/g" build/make/Makefile.patched >build/make/Makefile
+  fi
+
+  execute ./configure --prefix="${WORKSPACE}" --disable-unit-tests --disable-shared --disable-examples --as=yasm --enable-vp9-highbitdepth
+  execute make -j $MJOBS
+  execute make install
+
+  build_done "libvpx" "1.13.0"
+fi
+CONFIGURE_OPTIONS+=("--enable-libvpx")
+
 ##
 ## FFmpeg
 ##
@@ -355,7 +372,6 @@ download "${FFMPEG_URL}" "FFmpeg-release-$FFMPEG_VERSION.tar.gz"
 	\
   --enable-nonfree \
   --enable-gpl \
-  --enable-libvpx \
   \
   --disable-xlib \
   --disable-libxcb-shm \
