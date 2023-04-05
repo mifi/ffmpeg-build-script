@@ -8,7 +8,7 @@
 MACOS_MIN=10.11
 
 PROGNAME=$(basename "$0")
-FFMPEG_VERSION=5.1.2
+FFMPEG_VERSION=6.0
 CWD=$(pwd)
 PACKAGES="$CWD/packages"
 WORKSPACE="$CWD/workspace"
