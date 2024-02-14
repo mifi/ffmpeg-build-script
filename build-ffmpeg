@@ -141,6 +141,7 @@ build() {
   echo ""
   echo "building $1 - version $2"
   echo "======================="
+  CURRENT_PACKAGE_VERSION=$2
 
   if [ -f "$PACKAGES/$1.done" ]; then
     if grep -Fx "$2" "$PACKAGES/$1.done" >/dev/null; then
@@ -299,9 +300,9 @@ fi
 ## Codecs
 ##
 
-if build "x264" "5db6aa6"; then
-  download "https://code.videolan.org/videolan/x264/-/archive/5db6aa6cab1b146e07b60cc1736a01f21da01154/x264-5db6aa6cab1b146e07b60cc1736a01f21da01154.tar.gz" "x264-5db6aa6.tar.gz"
-  cd "${PACKAGES}"/x264-5db6aa6 || exit
+if build "x264" "941cae6d"; then
+  download "https://code.videolan.org/videolan/x264/-/archive/$CURRENT_PACKAGE_VERSION/x264-$CURRENT_PACKAGE_VERSION.tar.gz" "x264-$CURRENT_PACKAGE_VERSION.tar.gz"
+  cd "${PACKAGES}"/x264-$CURRENT_PACKAGE_VERSION || exit
 
   if [[ "$OSTYPE" == "linux-gnu" ]]; then
     execute ./configure --prefix="${WORKSPACE}" --enable-static --enable-pic CXXFLAGS="-fPIC ${CXXFLAGS}"
@@ -313,12 +314,12 @@ if build "x264" "5db6aa6"; then
   execute make install
   execute make install-lib-static
 
-  build_done "x264" "5db6aa6"
+  build_done "x264" $CURRENT_PACKAGE_VERSION
 fi
 CONFIGURE_OPTIONS+=("--enable-libx264")
 
-if build "libvpx" "1.13.0"; then
-  download "https://github.com/webmproject/libvpx/archive/refs/tags/v1.13.0.tar.gz" "libvpx-1.13.0.tar.gz"
+if build "libvpx" "1.13.1"; then
+  download "https://github.com/webmproject/libvpx/archive/refs/tags/v$CURRENT_PACKAGE_VERSION.tar.gz" "libvpx-$CURRENT_PACKAGE_VERSION.tar.gz"
 
   if [[ "$OSTYPE" == "darwin"* ]]; then
     echo "Applying Darwin patch"
@@ -330,9 +331,60 @@ if build "libvpx" "1.13.0"; then
   execute make -j $MJOBS
   execute make install
 
-  build_done "libvpx" "1.13.0"
+  build_done "libvpx" $CURRENT_PACKAGE_VERSION
 fi
 CONFIGURE_OPTIONS+=("--enable-libvpx")
+
+if command_exists "python3"; then
+  # dav1d needs meson and ninja along with nasm to be built
+  if command_exists "pip3"; then
+    # meson and ninja can be installed via pip3
+    execute pip3 install pip setuptools --quiet --upgrade --no-cache-dir --disable-pip-version-check
+    for r in meson ninja; do
+      if ! command_exists ${r}; then
+        execute pip3 install ${r} --quiet --upgrade --no-cache-dir --disable-pip-version-check
+      fi
+      export PATH=$PATH:~/Library/Python/3.9/bin
+    done
+  fi
+  if command_exists "meson"; then
+    if build "dav1d" "1.1.0"; then
+      download "https://code.videolan.org/videolan/dav1d/-/archive/$CURRENT_PACKAGE_VERSION/dav1d-$CURRENT_PACKAGE_VERSION.tar.gz"
+      make_dir build
+
+      CFLAGSBACKUP=$CFLAGS
+      if $MACOS_M1; then
+        export CFLAGS="-arch arm64"
+      fi
+
+      execute meson build --prefix="${WORKSPACE}" --buildtype=release --default-library=static --libdir="${WORKSPACE}"/lib
+      execute ninja -C build
+      execute ninja -C build install
+
+      if $MACOS_M1; then
+        export CFLAGS=$CFLAGSBACKUP
+      fi
+
+      build_done "dav1d" $CURRENT_PACKAGE_VERSION
+    fi
+    CONFIGURE_OPTIONS+=("--enable-libdav1d")
+  fi
+fi
+
+if build "svtav1" "1.7.0"; then
+  # Last known working commit which passed CI Tests from HEAD branch
+  download "https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v$CURRENT_PACKAGE_VERSION/SVT-AV1-v$CURRENT_PACKAGE_VERSION.tar.gz" "svtav1-$CURRENT_PACKAGE_VERSION.tar.gz"
+  cd "${PACKAGES}"/svtav1-$CURRENT_PACKAGE_VERSION//Build/linux || exit
+  execute cmake -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DENABLE_SHARED=off -DBUILD_SHARED_LIBS=OFF ../.. -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release
+  execute make -j $MJOBS
+  execute make install
+  execute cp SvtAv1Enc.pc "${WORKSPACE}/lib/pkgconfig/"
+  execute cp SvtAv1Dec.pc "${WORKSPACE}/lib/pkgconfig/"
+  build_done "svtav1" $CURRENT_PACKAGE_VERSION
+fi
+CONFIGURE_OPTIONS+=("--enable-libsvtav1")
+
+
 
 ##
 ## FFmpeg
