@@ -1,4 +1,4 @@
-name: build test
+name: Build
 
 on:
   push:
@@ -8,45 +8,59 @@ on:
 
 jobs:
   build-macos:
-    name: build in native macOS
-    runs-on: macos-14
+    name: build for macOS
+
+    strategy:
+      matrix:
+        os: [macos-latest, macos-14]
+
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 120
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install deps
         run: |
           brew install nasm yasm pkg-config cmake
 
-      - name: build ffmpeg
+      - name: Build ffmpeg
         run: |
           while sleep 300; do echo "=====[ $SECONDS seconds still running ]====="; done &
           SKIPINSTALL=yes VERBOSE=yes ./build-ffmpeg --build
           kill %1
-      - name: check shared library
+
+      - name: Check shared library
         run: |
           otool -L ./workspace/bin/ffmpeg
           otool -L ./workspace/bin/ffprobe
-      - name: test run
+
+      - name: Test run
         run: |
           ./workspace/bin/ffmpeg -buildconf
           ./workspace/bin/ffprobe -buildconf
+
+      - name: Rename binaries
+        run: |
+          mv workspace/bin/ffmpeg workspace/bin/ffmpeg-macos-${{ runner.arch }}
+          mv workspace/bin/ffprobe workspace/bin/ffprobe-macos-${{ runner.arch }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
           name: MacOS
           path: |
-            workspace/bin/ffmpeg
-            workspace/bin/ffprobe
+            workspace/bin/ffmpeg-macos-${{ runner.arch }}
+            workspace/bin/ffprobe-macos-${{ runner.arch }}
   
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           draft: true
           files: |
-            workspace/bin/ffmpeg
-            workspace/bin/ffprobe
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            workspace/bin/ffmpeg-macos-${{ runner.arch }}
+            workspace/bin/ffprobe-macos-${{ runner.arch }}
