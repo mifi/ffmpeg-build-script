@@ -7,7 +7,7 @@ It is used in LosslessCut for Mac App Store and therefore is built with `--disab
 
 First make any needed changes in the [build-ffmpeg](build-ffmpeg).
 
-Now build locally for arm64:
+Now build locally:
 
 ```bash
 # rm -rf packages workspace
@@ -56,7 +56,7 @@ git push --follow-tags
 
 Wait for GitHub actions to finish (again).
 
-Once a draft has been auto created under GitHub releases, upload the locally built ffmpeg and ffprobe as `ffmpeg-macos-ARM64` and `ffprobe-macos-ARM64`. Then release the draft.
+Once a draft has been auto created in GitHub, release it.
 
 Update `download-ffmpeg-*` in `package.json`.
 

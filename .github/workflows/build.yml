@@ -12,7 +12,8 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-latest, macos-14]
+        # macos-13 is x86_64, macos-14 is arm64
+        os: [macos-13, macos-14]
 
     runs-on: ${{ matrix.os }}
     timeout-minutes: 120
