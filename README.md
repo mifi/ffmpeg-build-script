@@ -14,7 +14,7 @@ Now build locally:
 ./build-ffmpeg --build
 ```
 
-If all is well, test it. Then commit and then push:
+If all is well, test it and commit.
 
 ```bash
 git push
