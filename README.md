@@ -45,6 +45,8 @@ Wait for [Github Actions](https://github.com/mifi/ffmpeg-build-script/actions) a
 /usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0)
 ```
 
+There should definitely not be any non-standard libraries added, especially no `/usr/local/*`.
+
 Now download and test the artifacts.
 
 To make a new release, tag a new version, and then push the tags, for example:

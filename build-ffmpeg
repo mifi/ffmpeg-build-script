@@ -15,8 +15,8 @@ WORKSPACE="$CWD/workspace"
 CFLAGS="-I$WORKSPACE/include -mmacosx-version-min=${MACOS_MIN}"
 LDFLAGS="-L$WORKSPACE/lib -mmacosx-version-min=${MACOS_MIN}"
 LDEXEFLAGS=""
-# EXTRALIBS="-ldl -lpthread -lm -lz"
-EXTRALIBS="-lpthread -lm"
+# -ldl and/or -lz seems to be needed by openssl on x64 mac
+EXTRALIBS="-ldl -lpthread -lm -lz"
 MACOS_M1=false
 CONFIGURE_OPTIONS=()
 LATEST=false
