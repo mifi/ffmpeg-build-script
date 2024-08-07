@@ -5,19 +5,24 @@ It is used in LosslessCut for Mac App Store and therefore is built with `--disab
 
 ## Make changes
 
-- First make any needed changes in the [build-ffmpeg](build-ffmpeg) and commit/push
-- Check build in GitHub Actions and test artifacts
+First make any needed changes in the [build-ffmpeg](build-ffmpeg).
+
+Now build locally for arm64:
+
+```bash
+# rm -rf packages workspace
+./build-ffmpeg --build
+```
+
+If all is well, test it. Then commit and then push:
+
+```bash
+git push
+```
 
 ## Release
 
-- Tag new version, for example `git tag -m '' -a 6.0-1`
-- `git push --follow-tags`
-- Wait for GitHub actions to finish
-- Release the auto-created draft
-
-## After build complete
-
-Check the Github Actions build that `otool -L` looks something like this:
+Wait for [Github Actions](https://github.com/mifi/ffmpeg-build-script/actions) and check in the output that `otool -L` looks something like this:
 
 ```
 /System/Library/Frameworks/Foundation.framework/Versions/C/Foundation (compatibility version 300.0.0, current version 1677.104.0)
@@ -39,6 +44,21 @@ Check the Github Actions build that `otool -L` looks something like this:
 /System/Library/Frameworks/CoreServices.framework/Versions/A/CoreServices (compatibility version 1.0.0, current version 1069.24.0)
 /usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0)
 ```
+
+Now download and test the artifacts.
+
+To make a new release, tag a new version, and then push the tags, for example:
+```bash
+git tag -m '' -a 6.0-1
+
+git push --follow-tags
+```
+
+Wait for GitHub actions to finish (again).
+
+Once a draft has been auto created under GitHub releases, upload the locally built ffmpeg and ffprobe as `ffmpeg-macos-ARM64` and `ffprobe-macos-ARM64`. Then release the draft.
+
+Update `download-ffmpeg-*` in `package.json`.
 
 ## Credits
 This repo is a fork of https://github.com/markus-perl/ffmpeg-build-script
