@@ -338,8 +338,18 @@ CONFIGURE_OPTIONS+=("--enable-libvpx")
 if command_exists "python3"; then
   # dav1d needs meson and ninja along with nasm to be built
   if command_exists "pip3"; then
-    # meson and ninja can be installed via pip3
+    needPip=false
+    for r in meson ninja; do
+      if ! command_exists ${r}; then
+        needPip=true
+      fi
+    done
+
+    if $needPip; then
+      # needInstall and ninja can be installed via pip3
     execute pip3 install pip setuptools --quiet --upgrade --no-cache-dir --disable-pip-version-check
+    fi
+
     for r in meson ninja; do
       if ! command_exists ${r}; then
         execute pip3 install ${r} --quiet --upgrade --no-cache-dir --disable-pip-version-check
