@@ -282,6 +282,11 @@ if ! command_exists "curl"; then
   exit 1
 fi
 
+if ! command_exists "pkg-config"; then
+  echo "pkg-config not installed."
+  exit 1
+fi
+
 if ! command_exists "cargo"; then
   echo "cargo not installed. rav1e encoder will not be available."
 fi
