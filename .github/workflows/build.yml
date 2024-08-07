@@ -14,7 +14,7 @@ jobs:
       matrix:
         # macos-13 is x86_64, macos-14 is arm64
         os: [macos-13, macos-14]
-
+  
     runs-on: ${{ matrix.os }}
     timeout-minutes: 120
 
@@ -25,6 +25,9 @@ jobs:
       - name: Install deps
         run: |
           brew install nasm yasm pkg-config cmake
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
 
       - name: Build ffmpeg
         run: |
