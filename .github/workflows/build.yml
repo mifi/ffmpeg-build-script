@@ -32,6 +32,9 @@ jobs:
 #      - name: Setup tmate session
 #        uses: mxschmitt/action-tmate@v3
 
+      - run: |
+          echo "${{ github.ref }}"
+
       - name: Build ffmpeg
         run: |
           while sleep 300; do echo "=====[ $SECONDS seconds still running ]====="; done &
