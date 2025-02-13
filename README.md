@@ -60,7 +60,8 @@ Wait for GitHub actions to finish (again).
 
 Once a draft has been auto created in GitHub, release it.
 
-Update `download-ffmpeg-*` in `package.json`.
+Update scripts `download-ffmpeg-darwin-*` in LosslessCut `package.json`.
 
 ## Credits
+
 This repo is a fork of https://github.com/markus-perl/ffmpeg-build-script
