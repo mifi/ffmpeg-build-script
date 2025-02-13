@@ -54,7 +54,7 @@ jobs:
           mv workspace/bin/ffprobe workspace/bin/ffprobe-macos-${{ runner.arch }}
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: MacOS
           path: |
