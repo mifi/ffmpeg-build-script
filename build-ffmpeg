@@ -24,6 +24,14 @@ LATEST=false
 FFMPEG_URL="https://github.com/FFmpeg/FFmpeg/archive/refs/heads/release/$FFMPEG_VERSION.tar.gz"
 
 
+command_exists() {
+  if ! [[ -x $(command -v "$1") ]]; then
+    return 1
+  fi
+
+  return 0
+}
+
 # Check for Apple Silicon
 if [[ ("$(uname -m)" == "arm64") && ("$OSTYPE" == "darwin"*) ]]; then
   # If arm64 AND darwin (macOS)
@@ -164,14 +172,6 @@ build() {
       echo "$1 is outdated, but will not be rebuilt. Pass in --latest to rebuild it or remove $PACKAGES/$1.done lockfile."
       return 1
     fi
-  fi
-
-  return 0
-}
-
-command_exists() {
-  if ! [[ -x $(command -v "$1") ]]; then
-    return 1
   fi
 
   return 0
