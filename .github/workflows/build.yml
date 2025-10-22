@@ -27,7 +27,15 @@ jobs:
 
       - name: Install deps
         run: |
-          arch -${{ matrix.arch }} brew install nasm yasm pkg-config cmake
+          if [ "${{ matrix.arch }}" = "x86_64" ]; then
+            if [ ! -x /usr/local/bin/brew ]; then
+              arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+            fi
+
+            # Ensure /usr/local brew is first on PATH for this step
+            export PATH="/usr/local/bin:$PATH"
+          fi
+          arch -${{ matrix.arch }} brew install nasm yasm
 
 # Useful for debugging:
 #      - name: Setup tmate session
