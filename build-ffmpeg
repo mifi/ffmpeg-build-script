@@ -385,8 +385,7 @@ if command_exists "python3"; then
 
     if $needMesonOrNinja; then
       if [[ "$OSTYPE" == "darwin"* ]]; then
-        # assume already installed:
-        # brew install python-setuptools meson ninja
+        echo 'assume already installed: python-setuptools meson ninja'
       else
         # meson and ninja can be installed via pip3
         execute pip3 install pip setuptools --quiet --upgrade --no-cache-dir --disable-pip-version-check
