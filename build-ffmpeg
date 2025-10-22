@@ -8,7 +8,7 @@
 MACOS_MIN=11.0
 
 PROGNAME=$(basename "$0")
-FFMPEG_VERSION=7.1
+FFMPEG_VERSION=8.0
 CWD=$(pwd)
 PACKAGES="$CWD/packages"
 WORKSPACE="$CWD/workspace"
@@ -21,7 +21,7 @@ MACOS_SILICON=false
 CONFIGURE_OPTIONS=()
 LATEST=false
 
-FFMPEG_URL="https://github.com/FFmpeg/FFmpeg/archive/refs/heads/release/$FFMPEG_VERSION.tar.gz"
+FFMPEG_URL="https://github.com/FFmpeg/FFmpeg/archive/refs/tags/n$FFMPEG_VERSION.tar.gz"
 
 
 command_exists() {
@@ -321,7 +321,7 @@ fi
 ## Codecs
 ##
 
-if build "x264" "be4f0200"; then
+if build "x264" "b35605ac"; then
   download "https://code.videolan.org/videolan/x264/-/archive/$CURRENT_PACKAGE_VERSION/x264-$CURRENT_PACKAGE_VERSION.tar.gz" "x264-$CURRENT_PACKAGE_VERSION.tar.gz"
   cd "${PACKAGES}"/x264-$CURRENT_PACKAGE_VERSION || exit
 
@@ -339,7 +339,7 @@ if build "x264" "be4f0200"; then
 fi
 CONFIGURE_OPTIONS+=("--enable-libx264")
 
-if build "libvpx" "1.15.0"; then
+if build "libvpx" "1.15.2"; then
   download "https://github.com/webmproject/libvpx/archive/refs/tags/v$CURRENT_PACKAGE_VERSION.tar.gz" "libvpx-$CURRENT_PACKAGE_VERSION.tar.gz"
 
   if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -356,13 +356,13 @@ if build "libvpx" "1.15.0"; then
 fi
 CONFIGURE_OPTIONS+=("--enable-libvpx")
 
-if build "libwebp" "1.4.0"; then
+if build "libwebp" "1.6.0"; then
   # libwebp can fail to compile on Ubuntu if these flags were left set to CFLAGS
   CPPFLAGS=
   download "https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-$CURRENT_PACKAGE_VERSION.tar.gz" "libwebp-$CURRENT_PACKAGE_VERSION.tar.gz"
   make_dir build
   cd build || exit
-  execute cmake -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_INSTALL_BINDIR=bin -DCMAKE_INSTALL_INCLUDEDIR=include -DENABLE_SHARED=OFF -DENABLE_STATIC=ON -DWEBP_BUILD_CWEBP=OFF -DWEBP_BUILD_DWEBP=OFF -DWEBP_BUILD_GIF2WEBP=OFF -DWEBP_BUILD_IMG2WEBP=OFF -DWEBP_BUILD_VWEBP=OFF -DWEBP_BUILD_EXTRAS=OFF -DWEBP_BUILD_ANIM_UTILS=OFF ../
+  execute cmake -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_INSTALL_BINDIR=bin -DCMAKE_INSTALL_INCLUDEDIR=include -DENABLE_SHARED=OFF -DENABLE_STATIC=ON -DWEBP_BUILD_CWEBP=OFF -DWEBP_BUILD_DWEBP=OFF -DWEBP_BUILD_GIF2WEBP=OFF -DWEBP_BUILD_IMG2WEBP=OFF -DWEBP_BUILD_VWEBP=OFF ../
   execute make -j $MJOBS
   execute make install
 
@@ -403,7 +403,7 @@ if command_exists "python3"; then
     fi
   fi
   if command_exists "meson"; then
-    if build "dav1d" "1.5.0"; then
+    if build "dav1d" "1.5.1"; then
       download "https://code.videolan.org/videolan/dav1d/-/archive/$CURRENT_PACKAGE_VERSION/dav1d-$CURRENT_PACKAGE_VERSION.tar.gz"
       make_dir build
 
@@ -426,7 +426,7 @@ if command_exists "python3"; then
   fi
 fi
 
-if build "svtav1" "2.3.0"; then
+if build "svtav1" "3.1.2"; then
   # Last known working commit which passed CI Tests from HEAD branch
   download "https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v$CURRENT_PACKAGE_VERSION/SVT-AV1-v$CURRENT_PACKAGE_VERSION.tar.gz" "svtav1-$CURRENT_PACKAGE_VERSION.tar.gz"
   cd "${PACKAGES}"/svtav1-$CURRENT_PACKAGE_VERSION//Build/linux || exit
@@ -439,14 +439,9 @@ fi
 CONFIGURE_OPTIONS+=("--enable-libsvtav1")
 
 # Needed for downloading URLs
-if build "openssl" "1.1.1w"; then
-  download "https://www.openssl.org/source/openssl-$CURRENT_PACKAGE_VERSION.tar.gz"
-  if $MACOS_SILICON; then
-    sed -n 's/\(##### GNU Hurd\)/"darwin64-arm64-cc" => { \n    inherit_from     => [ "darwin-common", asm("aarch64_asm") ],\n    CFLAGS           => add("-Wall"),\n    cflags           => add("-arch arm64 "),\n    lib_cppflags     => add("-DL_ENDIAN"),\n    bn_ops           => "SIXTY_FOUR_BIT_LONG", \n    perlasm_scheme   => "macosx", \n}, \n\1/g' Configurations/10-main.conf
-    execute ./Configure --prefix="${WORKSPACE}" no-shared no-asm darwin64-arm64-cc
-  else
-    execute ./config --prefix="${WORKSPACE}" --openssldir="${WORKSPACE}" --with-zlib-include="${WORKSPACE}"/include/ --with-zlib-lib="${WORKSPACE}"/lib no-shared zlib
-  fi
+if build "openssl" "3.5.2"; then
+  download "https://github.com/openssl/openssl/archive/refs/tags/openssl-$CURRENT_PACKAGE_VERSION.tar.gz" "openssl-$CURRENT_PACKAGE_VERSION.tar.gz"
+  execute ./Configure --prefix="${WORKSPACE}" --openssldir="${WORKSPACE}" --libdir="lib" --with-zlib-include="${WORKSPACE}"/include/ --with-zlib-lib="${WORKSPACE}"/lib no-shared zlib
   execute make -j $MJOBS
   execute make install_sw
   build_done "openssl" $CURRENT_PACKAGE_VERSION
