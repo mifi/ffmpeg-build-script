@@ -32,21 +32,24 @@ command_exists() {
   return 0
 }
 
+if command_exists "clang++"; then
+  # e.g. macos
+  export CC=$(which clang)
+  export CXX=$(which clang++)
+elif command_exists "g++"; then
+  export CC=$(which gcc)
+  export CXX=$(which g++)
+else
+  echo "No suitable C/C++ compiler found. Install clang (Xcode) or g++."
+  exit 1
+fi
+
 # Check for Apple Silicon
 if [[ ("$(uname -m)" == "arm64") && ("$OSTYPE" == "darwin"*) ]]; then
   # If arm64 AND darwin (macOS)
   export ARCH=arm64
-  export CXX=$(which clang++)
   MACOS_SILICON=true
   echo "Apple Silicon detected."
-
-  #check if clang++ is installed and print version. Otherwise exit with an error message
-  if command_exists "clang++"; then
-    echo "clang++ is installed. Version: $(clang++ --version | head -n 1)"
-  else
-    echo "clang++ is not installed. Please install Xcode."
-    exit 1
-  fi
 fi
 
 # Speed up the process
