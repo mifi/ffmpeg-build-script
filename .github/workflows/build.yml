@@ -35,7 +35,8 @@ jobs:
             # Ensure /usr/local brew is first on PATH for this step
             export PATH="/usr/local/bin:$PATH"
           fi
-          arch -${{ matrix.arch }} brew install nasm yasm
+          # dav1d needs meson and ninja along with nasm to be built
+          arch -${{ matrix.arch }} brew install nasm yasm python-setuptools meson
 
 # Useful for debugging:
 #      - name: Setup tmate session
