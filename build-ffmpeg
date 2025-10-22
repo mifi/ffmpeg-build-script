@@ -5,15 +5,15 @@
 
 # Min electron supported version
 # See also https://github.com/mifi/lossless-cut/blob/master/CONTRIBUTING.md
-MACOS_MIN=11.0
+export MACOSX_DEPLOYMENT_TARGET=11.0
 
 PROGNAME=$(basename "$0")
 FFMPEG_VERSION=8.0
 CWD=$(pwd)
 PACKAGES="$CWD/packages"
 WORKSPACE="$CWD/workspace"
-CFLAGS="-I$WORKSPACE/include -mmacosx-version-min=${MACOS_MIN}"
-LDFLAGS="-L$WORKSPACE/lib -mmacosx-version-min=${MACOS_MIN}"
+CFLAGS="-I$WORKSPACE/include"
+LDFLAGS="-L$WORKSPACE/lib"
 LDEXEFLAGS=""
 # -ldl and/or -lz seems to be needed by openssl on x64 mac
 EXTRALIBS="-ldl -lpthread -lm -lz"
@@ -36,7 +36,6 @@ command_exists() {
 if [[ ("$(uname -m)" == "arm64") && ("$OSTYPE" == "darwin"*) ]]; then
   # If arm64 AND darwin (macOS)
   export ARCH=arm64
-  export MACOSX_DEPLOYMENT_TARGET=11.0
   export CXX=$(which clang++)
   MACOS_SILICON=true
   echo "Apple Silicon detected."
