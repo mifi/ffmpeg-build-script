@@ -17,7 +17,6 @@ LDFLAGS="-L$WORKSPACE/lib"
 LDEXEFLAGS=""
 # -ldl and/or -lz seems to be needed by openssl on x64 mac
 EXTRALIBS="-ldl -lpthread -lm -lz"
-MACOS_SILICON=false
 CONFIGURE_OPTIONS=()
 LATEST=false
 
@@ -44,13 +43,12 @@ else
   exit 1
 fi
 
+# Not sure if this is needed anymore
 if [[ "$OSTYPE" == "darwin"* ]]; then
   # Check for Apple Silicon
   if [[ "$(uname -m)" == "arm64" ]]; then
     # If arm64 AND darwin (macOS)
     export ARCH=arm64
-    MACOS_SILICON=true
-    echo "Apple Silicon detected."
   else
     export ARCH=x86_64
   fi

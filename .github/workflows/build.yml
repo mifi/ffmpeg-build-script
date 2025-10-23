@@ -16,9 +16,9 @@ jobs:
 
     strategy:
       matrix:
-        arch: [arm64, x86_64]
+        runner: [macos-15, macos-15-intel]
   
-    runs-on: macos-latest
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 120
 
     steps:
@@ -27,19 +27,8 @@ jobs:
 
       - name: Install deps
         run: |
-          if [ "${{ matrix.arch }}" = "x86_64" ]; then
-            if [ ! -x /usr/local/bin/brew ]; then
-              arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-            fi
-
-            # Ensure /usr/local brew is first on PATH for this step
-            export PATH="/usr/local/bin:$PATH"
-            
-            # https://github.com/Homebrew/homebrew-core/issues/195288#issuecomment-2430501049
-            find /usr/local/bin -lname '*/Library/Frameworks/Python.framework/*' -delete
-          fi
           # dav1d needs meson and ninja along with nasm to be built
-          arch -${{ matrix.arch }} brew install nasm yasm python-setuptools meson
+          brew install nasm yasm python-setuptools meson
 
 # Useful for debugging:
 #      - name: Setup tmate session
@@ -51,31 +40,31 @@ jobs:
       - name: Build ffmpeg
         run: |
           while sleep 300; do echo "=====[ $SECONDS seconds still running ]====="; done &
-          arch -${{ matrix.arch }} ./build-ffmpeg --build
+          ./build-ffmpeg --build
           kill %1
 
       - name: Check shared library
         run: |
-          arch -${{ matrix.arch }} otool -L ./workspace/bin/ffmpeg
-          arch -${{ matrix.arch }} otool -L ./workspace/bin/ffprobe
+          otool -L ./workspace/bin/ffmpeg
+          otool -L ./workspace/bin/ffprobe
 
       - name: Test run
         run: |
-          arch -${{ matrix.arch }} ./workspace/bin/ffmpeg -buildconf
-          arch -${{ matrix.arch }} ./workspace/bin/ffprobe -buildconf
+          ./workspace/bin/ffmpeg -buildconf
+          ./workspace/bin/ffprobe -buildconf
 
       - name: Rename binaries
         run: |
-          mv workspace/bin/ffmpeg workspace/bin/ffmpeg-macos-${{ matrix.arch }}
-          mv workspace/bin/ffprobe workspace/bin/ffprobe-macos-${{ matrix.arch }}
+          mv workspace/bin/ffmpeg workspace/bin/ffmpeg-macos-${{ runner.arch }}
+          mv workspace/bin/ffprobe workspace/bin/ffprobe-macos-${{ runner.arch }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: MacOS-${{ matrix.arch }}
+          name: MacOS-${{ runner.arch }}
           path: |
-            workspace/bin/ffmpeg-macos-${{ matrix.arch }}
-            workspace/bin/ffprobe-macos-${{ matrix.arch }}
+            workspace/bin/ffmpeg-macos-${{ runner.arch }}
+            workspace/bin/ffprobe-macos-${{ runner.arch }}
   
       - name: Release
         uses: softprops/action-gh-release@v1
@@ -85,5 +74,5 @@ jobs:
         with:
           draft: true
           files: |
-            workspace/bin/ffmpeg-macos-${{ matrix.arch }}
-            workspace/bin/ffprobe-macos-${{ matrix.arch }}
+            workspace/bin/ffmpeg-macos-${{ runner.arch }}
+            workspace/bin/ffprobe-macos-${{ runner.arch }}
