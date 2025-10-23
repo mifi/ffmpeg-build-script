@@ -34,6 +34,9 @@ jobs:
 
             # Ensure /usr/local brew is first on PATH for this step
             export PATH="/usr/local/bin:$PATH"
+            
+            # https://github.com/Homebrew/homebrew-core/issues/195288#issuecomment-2430501049
+            find /usr/local/bin -lname '*/Library/Frameworks/Python.framework/*' -delete
           fi
           # dav1d needs meson and ninja along with nasm to be built
           arch -${{ matrix.arch }} brew install nasm yasm python-setuptools meson
