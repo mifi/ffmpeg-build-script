@@ -327,6 +327,16 @@ if build "zlib" "1.3.1"; then
   build_done "zlib" $CURRENT_PACKAGE_VERSION
 fi
 
+# Needed for downloading URLs
+if build "openssl" "3.5.2"; then
+  download "https://github.com/openssl/openssl/archive/refs/tags/openssl-$CURRENT_PACKAGE_VERSION.tar.gz" "openssl-$CURRENT_PACKAGE_VERSION.tar.gz"
+  execute ./Configure --prefix="${WORKSPACE}" --openssldir="${WORKSPACE}" --libdir="lib" --with-zlib-include="${WORKSPACE}"/include/ --with-zlib-lib="${WORKSPACE}"/lib no-shared zlib
+  execute make -j $MJOBS
+  execute make install_sw
+  build_done "openssl" $CURRENT_PACKAGE_VERSION
+fi
+CONFIGURE_OPTIONS+=("--enable-openssl")
+
 ##
 ## Codecs
 ##
@@ -434,16 +444,6 @@ if build "svtav1" "3.1.2"; then
   build_done "svtav1" $CURRENT_PACKAGE_VERSION
 fi
 CONFIGURE_OPTIONS+=("--enable-libsvtav1")
-
-# Needed for downloading URLs
-if build "openssl" "3.5.2"; then
-  download "https://github.com/openssl/openssl/archive/refs/tags/openssl-$CURRENT_PACKAGE_VERSION.tar.gz" "openssl-$CURRENT_PACKAGE_VERSION.tar.gz"
-  execute ./Configure --prefix="${WORKSPACE}" --openssldir="${WORKSPACE}" --libdir="lib" --with-zlib-include="${WORKSPACE}"/include/ --with-zlib-lib="${WORKSPACE}"/lib no-shared zlib
-  execute make -j $MJOBS
-  execute make install_sw
-  build_done "openssl" $CURRENT_PACKAGE_VERSION
-fi
-CONFIGURE_OPTIONS+=("--enable-openssl")
 
 ##
 ## FFmpeg
