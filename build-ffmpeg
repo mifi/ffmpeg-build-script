@@ -44,12 +44,20 @@ else
   exit 1
 fi
 
-# Check for Apple Silicon
-if [[ ("$(uname -m)" == "arm64") && ("$OSTYPE" == "darwin"*) ]]; then
-  # If arm64 AND darwin (macOS)
-  export ARCH=arm64
-  MACOS_SILICON=true
-  echo "Apple Silicon detected."
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  # Check for Apple Silicon
+  if [[ "$(uname -m)" == "arm64" ]]; then
+    # If arm64 AND darwin (macOS)
+    export ARCH=arm64
+    MACOS_SILICON=true
+    echo "Apple Silicon detected."
+  else
+    export ARCH=x86_64
+  fi
+
+  export CC="$CC -arch $ARCH"
+  export CFLAGS="$CFLAGS -arch $ARCH"
+  export LDFLAGS="$LDFLAGS -arch $ARCH"
 fi
 
 # Speed up the process
@@ -399,23 +407,15 @@ if command_exists "python3"; then
       fi
     fi
   fi
+
   if command_exists "meson"; then
     if build "dav1d" "1.5.1"; then
       download "https://code.videolan.org/videolan/dav1d/-/archive/$CURRENT_PACKAGE_VERSION/dav1d-$CURRENT_PACKAGE_VERSION.tar.gz"
       make_dir build
 
-      CFLAGSBACKUP=$CFLAGS
-      if $MACOS_SILICON; then
-        export CFLAGS="-arch arm64"
-      fi
-
       execute meson build --prefix="${WORKSPACE}" --buildtype=release --default-library=static --libdir="${WORKSPACE}"/lib
       execute ninja -C build
       execute ninja -C build install
-
-      if $MACOS_SILICON; then
-        export CFLAGS=$CFLAGSBACKUP
-      fi
 
       build_done "dav1d" $CURRENT_PACKAGE_VERSION
     fi
