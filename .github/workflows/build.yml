@@ -1,11 +1,11 @@
 name: Build
 
+# Builds PRs and tags (releases), but not pushes to master, because that's the same commit as the PR (or the tag) and would build it twice
 on:
   push:
     tags:
       - '*'
-    branches:
-      - master
+  pull_request:
     paths-ignore:
       - '*.md'
   workflow_dispatch:
