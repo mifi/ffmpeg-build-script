@@ -1,6 +1,7 @@
 name: Check for new FFmpeg release
 
-# Opens an issue when there is a newer FFmpeg release than FFMPEG_VERSION in build-ffmpeg
+# Fails (which notifies the repo owner) when there is a newer patch release on our FFmpeg branch than FFMPEG_VERSION in build-ffmpeg,
+# and warns when there is a newer release branch
 on:
   schedule:
     - cron: '17 6 * * 1'
@@ -8,7 +9,10 @@ on:
 
 permissions:
   contents: read
-  issues: write
+
+defaults:
+  run:
+    shell: bash # enables pipefail
 
 jobs:
   check:
@@ -17,26 +21,18 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: Compare versions
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: |
           current=$(grep -m1 -o '^FFMPEG_VERSION=[0-9.]*' build-ffmpeg | cut -d= -f2)
           branch=$(echo "$current" | cut -d. -f1-2)
           tags=$(git ls-remote --tags --refs https://github.com/FFmpeg/FFmpeg 'n*' | sed 's|.*refs/tags/n||' | grep -E '^[0-9]+\.[0-9]+(\.[0-9]+)?$' | sort -V)
           latest_patch=$(echo "$tags" | grep -E "^${branch//./\\.}(\.|$)" | tail -1)
           latest=$(echo "$tags" | tail -1)
+          [ -n "$current" ] && [ -n "$latest" ] || { echo "::error::Could not determine versions"; exit 1; }
           echo "current $current, latest on $branch: $latest_patch, latest: $latest"
 
-          new=""
-          [ "$latest_patch" != "$current" ] && new="$latest_patch"
-          [ -z "$new" ] && [ "$latest" != "$current" ] && new="$latest"
-          [ -z "$new" ] && exit 0
-
-          title="New FFmpeg release: $new"
-          if gh issue list --repo "$GITHUB_REPOSITORY" --state all --search "in:title \"$title\"" --json title --jq '.[].title' | grep -qxF "$title"; then
-            echo "Issue already exists"; exit 0
+          if [ "$latest_patch" != "$current" ]; then
+            echo "::error::New FFmpeg patch release $latest_patch (current $current). These often contain security fixes, see https://ffmpeg.org/security.html"; exit 1
           fi
-          gh issue create --repo "$GITHUB_REPOSITORY" --title "$title" --body "Current: $current. Latest on the $branch branch: $latest_patch. Latest release: $latest.
-
-          Patch releases on our branch often contain security fixes, see https://ffmpeg.org/security.html
-          See also the FFmpeg upgrade checklist in https://github.com/mifi/lossless-cut/blob/master/CONTRIBUTING.md"
+          if [ "$latest" != "$current" ]; then
+            echo "::warning::New FFmpeg release $latest (current $current), see the upgrade checklist in https://github.com/mifi/lossless-cut/blob/master/CONTRIBUTING.md"
+          fi

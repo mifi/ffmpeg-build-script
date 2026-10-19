@@ -49,7 +49,7 @@ jobs:
           for bin in ./workspace/bin/ffmpeg ./workspace/bin/ffprobe; do
             otool -L "$bin"
             # Only system libraries are allowed, see README
-            if otool -L "$bin" | tail -n +2 | grep -vE '^\s+/(System/Library|usr/lib)/'; then
+            if otool -L "$bin" | tail -n +2 | grep -vE '^[[:space:]]+/(System/Library|usr/lib)/'; then
               echo "::error::$bin links non-system libraries (above)"; exit 1
             fi
             minos=$(otool -l "$bin" | grep -A4 LC_BUILD_VERSION | awk '/minos/ { print $2 }')
