@@ -43,10 +43,21 @@ jobs:
           ./build-ffmpeg --build
           kill %1
 
-      - name: Check shared library
+      - name: Check shared libraries and minimum macOS version
         run: |
-          otool -L ./workspace/bin/ffmpeg
-          otool -L ./workspace/bin/ffprobe
+          target=$(grep -m1 -o 'MACOSX_DEPLOYMENT_TARGET=[0-9.]*' build-ffmpeg | cut -d= -f2)
+          for bin in ./workspace/bin/ffmpeg ./workspace/bin/ffprobe; do
+            otool -L "$bin"
+            # Only system libraries are allowed, see README
+            if otool -L "$bin" | tail -n +2 | grep -vE '^[[:space:]]+/(System/Library|usr/lib)/'; then
+              echo "::error::$bin links non-system libraries (above)"; exit 1
+            fi
+            minos=$(otool -l "$bin" | grep -A4 LC_BUILD_VERSION | awk '/minos/ { print $2 }')
+            echo "$bin minos: $minos"
+            if [ "$minos" != "$target" ]; then
+              echo "::error::$bin minos $minos != MACOSX_DEPLOYMENT_TARGET $target"; exit 1
+            fi
+          done
 
       - name: Test run
         run: |
@@ -76,3 +87,15 @@ jobs:
           files: |
             workspace/bin/ffmpeg-macos-${{ runner.arch }}
             workspace/bin/ffprobe-macos-${{ runner.arch }}
+
+  # Publish the draft release once all architectures have been uploaded
+  publish:
+    needs: build-macos
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - run: gh release edit "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --draft=false
+        env:
+          GH_TOKEN: ${{ github.token }}

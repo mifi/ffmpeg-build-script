@@ -1,0 +1,38 @@
+name: Check for new FFmpeg release
+
+# Fails (GitHub emails whoever last changed the schedule) when there is a newer patch release on our FFmpeg branch than FFMPEG_VERSION in build-ffmpeg,
+# and warns when there is a newer release branch
+on:
+  schedule:
+    - cron: '17 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash # enables pipefail
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Compare versions
+        run: |
+          current=$(grep -m1 -o '^FFMPEG_VERSION=[0-9.]*' build-ffmpeg | cut -d= -f2 || true)
+          branch=$(echo "$current" | cut -d. -f1-2)
+          tags=$(git ls-remote --tags --refs https://github.com/FFmpeg/FFmpeg 'n*' | sed 's|.*refs/tags/n||' | grep -E '^[0-9]+\.[0-9]+(\.[0-9]+)?$' | sort -V)
+          latest_patch=$(echo "$tags" | grep -E "^${branch//./\\.}(\.|$)" | tail -1 || true)
+          latest=$(echo "$tags" | tail -1)
+          [ -n "$current" ] && [ -n "$latest_patch" ] && [ -n "$latest" ] || { echo "::error::Could not determine versions"; exit 1; }
+          echo "current $current, latest on $branch: $latest_patch, latest: $latest"
+
+          if [ "$latest_patch" != "$current" ]; then
+            echo "::error::New FFmpeg patch release $latest_patch (current $current). These often contain security fixes, see https://ffmpeg.org/security.html"; exit 1
+          fi
+          if [ "$latest" != "$current" ]; then
+            echo "::warning::New FFmpeg release $latest (current $current), see the upgrade checklist in https://github.com/mifi/lossless-cut/blob/master/CONTRIBUTING.md"
+          fi
