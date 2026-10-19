@@ -14,20 +14,17 @@ Now build locally:
 ./build-ffmpeg --build
 ```
 
-If all is well, test it and commit.
-
-```bash
-git push
-```
+If all is well, commit to a branch and open a PR.
 
 ## Release
 
-Wait for [Github Actions](https://github.com/mifi/ffmpeg-build-script/actions). The build fails if `ffmpeg` or `ffprobe` link anything other than system libraries (`/System/Library/`, `/usr/lib/`), or if their minimum macOS version differs from `MACOSX_DEPLOYMENT_TARGET`.
+Wait for [Github Actions](https://github.com/mifi/ffmpeg-build-script/actions) on the PR. The build fails if `ffmpeg` or `ffprobe` link anything other than system libraries (`/System/Library/`, `/usr/lib/`), or if their minimum macOS version differs from `MACOSX_DEPLOYMENT_TARGET`.
 
-Now download and test the artifacts.
+Now download and test the artifacts, then merge the PR.
 
-To make a new release, tag a new version, and then push the tags, for example:
+To make a new release, tag the merge commit on `master`, and then push the tags, for example:
 ```bash
+git checkout master && git pull
 git tag -m '' -a 6.0-1
 
 git push --follow-tags
@@ -37,7 +34,7 @@ Wait for GitHub actions to finish (again). The release is published automaticall
 
 Then update the FFmpeg version in LosslessCut.
 
-CI runs on pushes to `master` and on tags. To build another branch, run the workflow manually (Actions → Build → Run workflow).
+CI builds pull requests and tags. To build a branch without a PR, run the workflow manually (Actions → Build → Run workflow).
 
 ## Upgrading
 
