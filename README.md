@@ -62,6 +62,12 @@ Once a draft has been auto created in GitHub, release it.
 
 Update scripts `download-ffmpeg-darwin-*` in LosslessCut `package.json`.
 
+CI runs on pushes to `master` and on tags. To build another branch, run the workflow manually (Actions → Build → Run workflow).
+
+## Upgrading
+
+Bump `FFMPEG_VERSION` (tags at https://github.com/FFmpeg/FFmpeg/tags) and the `build "<package>" "<version>"` lines in [build-ffmpeg](build-ffmpeg). Prefer the newest patch release of FFmpeg's release branch that BtbN builds for Windows/Linux (see https://github.com/mifi/ffmpeg-builds), so all platforms are on the same branch. Release tags are named `<ffmpeg version>-<n>`, e.g. `8.1.3-1`.
+
 ## Credits
 
-This repo is a fork of https://github.com/markus-perl/ffmpeg-build-script
+This repo is a fork of https://github.com/markus-perl/ffmpeg-build-script. Upstream was restructured in 2026 (the script is split into `src/` and builds many more libraries), so don't merge it wholesale. Port the relevant fixes and version bumps by hand.
