@@ -41,7 +41,7 @@ CI runs on pushes to `master` and on tags. To build another branch, run the work
 
 ## Upgrading
 
-Bump `FFMPEG_VERSION` (tags at https://github.com/FFmpeg/FFmpeg/tags) and the `build "<package>" "<version>"` lines in [build-ffmpeg](build-ffmpeg). Prefer the newest patch release of FFmpeg's release branch that BtbN builds for Windows/Linux (see https://github.com/mifi/ffmpeg-builds), so all platforms are on the same branch. Release tags are named `<ffmpeg version>-<n>`, e.g. `8.1.3-1`.
+Bump `FFMPEG_VERSION` (tags at https://github.com/FFmpeg/FFmpeg/tags) and the `build "<package>" "<version>"` lines in [build-ffmpeg](build-ffmpeg). Prefer the newest patch release of FFmpeg's release branch that BtbN builds for Windows/Linux (see https://github.com/mifi/ffmpeg-builds), so all platforms are on the same branch. Release tags are named `<ffmpeg version>-<n>`, e.g. `8.1.3-1`. A weekly workflow fails when there's a new patch release on our FFmpeg branch (GitHub disables scheduled workflows after 60 days without repo activity, so re-enable it if needed).
 
 ## Credits
 
