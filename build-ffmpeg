@@ -8,7 +8,7 @@
 export MACOSX_DEPLOYMENT_TARGET=12.0
 
 PROGNAME=$(basename "$0")
-FFMPEG_VERSION=8.1.3
+FFMPEG_VERSION=9.0.2
 CWD=$(pwd)
 PACKAGES="$CWD/packages"
 WORKSPACE="$CWD/workspace"
