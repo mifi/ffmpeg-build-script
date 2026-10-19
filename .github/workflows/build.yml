@@ -1,6 +1,6 @@
 name: Build
 
-# Builds PRs and tags (releases), but not pushes to master, because that's the same commit as the PR (or the tag) and would build it twice
+# Build PRs and tags (releases). Not pushes to master: they're already built in the PR and again when tagged.
 on:
   push:
     tags:
@@ -9,6 +9,11 @@ on:
     paths-ignore:
       - '*.md'
   workflow_dispatch:
+
+# a new push to a PR cancels its running build
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build-macos:

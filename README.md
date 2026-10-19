@@ -24,6 +24,7 @@ Now download and test the artifacts, then merge the PR.
 
 To make a new release, tag the merge commit on `master`, and then push the tags, for example:
 ```bash
+git checkout master && git pull
 git tag -m '' -a 6.0-1
 
 git push --follow-tags
