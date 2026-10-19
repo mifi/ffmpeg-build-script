@@ -8,7 +8,7 @@
 export MACOSX_DEPLOYMENT_TARGET=12.0
 
 PROGNAME=$(basename "$0")
-FFMPEG_VERSION=8.0
+FFMPEG_VERSION=8.1.3
 CWD=$(pwd)
 PACKAGES="$CWD/packages"
 WORKSPACE="$CWD/workspace"
@@ -317,7 +317,7 @@ fi
 ##
 
 # needed by openssl?
-if build "zlib" "1.3.1"; then
+if build "zlib" "1.3.2"; then
   download "https://github.com/madler/zlib/releases/download/v$CURRENT_PACKAGE_VERSION/zlib-$CURRENT_PACKAGE_VERSION.tar.gz"
   execute ./configure --static --prefix="${WORKSPACE}"
   execute make -j $MJOBS
@@ -326,7 +326,7 @@ if build "zlib" "1.3.1"; then
 fi
 
 # Needed for downloading URLs
-if build "openssl" "3.5.2"; then
+if build "openssl" "3.5.9"; then
   download "https://github.com/openssl/openssl/archive/refs/tags/openssl-$CURRENT_PACKAGE_VERSION.tar.gz" "openssl-$CURRENT_PACKAGE_VERSION.tar.gz"
   execute ./Configure --prefix="${WORKSPACE}" --openssldir="${WORKSPACE}" --libdir="lib" --with-zlib-include="${WORKSPACE}"/include/ --with-zlib-lib="${WORKSPACE}"/lib no-shared zlib
   execute make -j $MJOBS
@@ -357,7 +357,7 @@ if build "x264" "b35605ac"; then
 fi
 CONFIGURE_OPTIONS+=("--enable-libx264")
 
-if build "libvpx" "1.15.2"; then
+if build "libvpx" "1.16.0"; then
   download "https://github.com/webmproject/libvpx/archive/refs/tags/v$CURRENT_PACKAGE_VERSION.tar.gz" "libvpx-$CURRENT_PACKAGE_VERSION.tar.gz"
 
   if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -417,7 +417,7 @@ if command_exists "python3"; then
   fi
 
   if command_exists "meson"; then
-    if build "dav1d" "1.5.1"; then
+    if build "dav1d" "1.5.4"; then
       download "https://code.videolan.org/videolan/dav1d/-/archive/$CURRENT_PACKAGE_VERSION/dav1d-$CURRENT_PACKAGE_VERSION.tar.gz"
       make_dir build
 
